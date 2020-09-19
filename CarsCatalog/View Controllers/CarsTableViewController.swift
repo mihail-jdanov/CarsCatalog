@@ -62,7 +62,7 @@ class CarsTableViewController: UITableViewController {
     
     @objc
     private func deleteButtonAction() {
-        let isEditing = navigationItem.leftBarButtonItem == deleteBarButtonItem
+        let isEditing = !tableView.isEditing
         navigationItem.leftBarButtonItem = isEditing ? doneBarButtonItem : deleteBarButtonItem
         tableView.setEditing(isEditing, animated: true)
     }
@@ -78,8 +78,7 @@ class CarsTableViewController: UITableViewController {
                 self.tableView.isEditing = false
             }
         } else {
-            self.navigationItem.leftBarButtonItem = self.navigationItem.leftBarButtonItem == self.doneBarButtonItem
-                ? self.doneBarButtonItem : self.deleteBarButtonItem
+            navigationItem.leftBarButtonItem = tableView.isEditing ? doneBarButtonItem : deleteBarButtonItem
         }
     }
     
@@ -104,7 +103,10 @@ class CarsTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .delete
+        if tableView.isEditing {
+            return .delete
+        }
+        return .none
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
