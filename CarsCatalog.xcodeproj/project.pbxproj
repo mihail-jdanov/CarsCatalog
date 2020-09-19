@@ -49,6 +49,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		875C867D251674D300E34BE8 /* Car Model */ = {
+			isa = PBXGroup;
+			children = (
+				876AF07625154AD40016E5C8 /* Car.swift */,
+				87BCD48425151C3B00646A40 /* BodyType.swift */,
+			);
+			path = "Car Model";
+			sourceTree = "<group>";
+		};
 		87621DB325153B8E00EB14D3 /* View Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -87,11 +96,10 @@
 				87BCD4442514FD9D00646A40 /* AppDelegate.swift */,
 				876AF07825154E0B0016E5C8 /* Extensions */,
 				87621DB325153B8E00EB14D3 /* View Controllers */,
+				875C867D251674D300E34BE8 /* Car Model */,
 				87621DB125153B7C00EB14D3 /* EditCarAlertController.swift */,
 				87BCD47E251507B700646A40 /* CoreDataService.swift */,
 				87BCD48025150D4200646A40 /* CarsManager.swift */,
-				876AF07625154AD40016E5C8 /* Car.swift */,
-				87BCD48425151C3B00646A40 /* BodyType.swift */,
 				87BCD44A2514FD9D00646A40 /* Main.storyboard */,
 				87BCD44D2514FDA200646A40 /* Assets.xcassets */,
 				87BCD44F2514FDA200646A40 /* LaunchScreen.storyboard */,
@@ -137,10 +145,10 @@
 			};
 			buildConfigurationList = 87BCD43C2514FD9D00646A40 /* Build configuration list for PBXProject "CarsCatalog" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = en;
+			developmentRegion = ru;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
+				ru,
 				Base,
 			);
 			mainGroup = 87BCD4382514FD9D00646A40;
@@ -255,7 +263,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -309,7 +317,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

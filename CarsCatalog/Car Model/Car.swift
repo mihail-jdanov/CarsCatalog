@@ -24,7 +24,7 @@ struct Car {
     }
     
     var bodyType: BodyType {
-        return BodyType(rawValue: Int(managedCar.bodyType)) ?? .sedan
+        return BodyType(rawValue: Int(managedCar.bodyType)) ?? BodyType.allCases[0]
     }
     
 }

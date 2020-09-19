@@ -11,6 +11,7 @@ class EditCarAlertController: NSObject {
     
     private let yearOfIssuePickerView = UIPickerView()
     private let bodyTypePickerView = UIPickerView()
+    private let maxCharactersCountForTextFields = 30
     
     private var manufacturerTextField: UITextField?
     private var modelTextField: UITextField?
@@ -33,9 +34,9 @@ class EditCarAlertController: NSObject {
     private func getPickerViewTitle(_ pickerView: UIPickerView, forRow row: Int) -> String? {
         switch pickerView {
         case yearOfIssuePickerView:
-            return String(CarsManager.yearOfIssueValues[row])
+            return String(CarsManager.shared.yearOfIssueValues[row])
         case bodyTypePickerView:
-            return CarsManager.bodyTypeValues[row].stringValue
+            return CarsManager.shared.bodyTypeValues[row].stringValue
         default:
             return nil
         }
@@ -45,13 +46,56 @@ class EditCarAlertController: NSObject {
     private func validateTextFields() {
         var isValidationPassed = true
         let textFields = [manufacturerTextField, modelTextField, yearOfIssueTextField, bodyTypeTextField]
-        for textField in textFields where textField?.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true {
-            isValidationPassed = false
+        for textField in textFields {
+            let text = textField?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            if text.isEmpty || text.count > maxCharactersCountForTextFields {
+                isValidationPassed = false
+            }
         }
         saveAlertAction?.isEnabled = isValidationPassed
     }
     
-    func show(isNewCar: Bool, over viewController: UIViewController) {
+    private func saveCar(editingCarIndex: Int?) {
+        let yearOfIssueIndex = yearOfIssuePickerView.selectedRow(inComponent: 0)
+        let bodyTypeIndex = bodyTypePickerView.selectedRow(inComponent: 0)
+        let manufacturer = manufacturerTextField?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let model = modelTextField?.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let yearOfIssue = CarsManager.shared.yearOfIssueValues[yearOfIssueIndex]
+        let bodyType = CarsManager.shared.bodyTypeValues[bodyTypeIndex]
+        if let index = editingCarIndex {
+            CarsManager.shared.updateCar(
+                atIndex: index,
+                manufacturer: manufacturer,
+                model: model,
+                yearOfIssue: yearOfIssue,
+                bodyType: bodyType
+            )
+        } else {
+            CarsManager.shared.addNewCar(
+                manufacturer: manufacturer,
+                model: model,
+                yearOfIssue: yearOfIssue,
+                bodyType: bodyType
+            )
+        }
+    }
+    
+    private func fillTextFieldsForCarEditing(editingCarIndex index: Int?) {
+        guard let index = index else { return }
+        let car = CarsManager.shared.cars[index]
+        manufacturerTextField?.text = car.manufacturer
+        modelTextField?.text = car.model
+        yearOfIssueTextField?.text = String(car.yearOfIssue)
+        bodyTypeTextField?.text = car.bodyType.stringValue
+        let yearOfIssueIndex = CarsManager.shared.yearOfIssueValues.firstIndex(of: car.yearOfIssue) ?? 0
+        yearOfIssuePickerView.selectRow(yearOfIssueIndex, inComponent: 0, animated: false)
+        let bodyTypeIndex = CarsManager.shared.bodyTypeValues.firstIndex(of: car.bodyType) ?? 0
+        bodyTypePickerView.selectRow(bodyTypeIndex, inComponent: 0, animated: false)
+    }
+    
+    func show(over viewController: UIViewController, editingCarIndex: Int? = nil,
+              saveActionCompletion: (() -> Void)?, alertDisappearCompletion: (() -> Void)?) {
+        let isNewCar = editingCarIndex == nil
         let alertTitle = isNewCar ? "Добавить автомобиль" : "Редактировать автомобиль"
         let alertController = UIAlertController(title: alertTitle, message: nil, preferredStyle: .alert)
         alertController.addTextField { (textField) in
@@ -78,16 +122,17 @@ class EditCarAlertController: NSObject {
             textField.delegate = self
             textField.addTarget(self, action: #selector(self.validateTextFields), for: .editingChanged)
         }
+        fillTextFieldsForCarEditing(editingCarIndex: editingCarIndex)
         let saveActionTitle = isNewCar ? "Добавить" : "Сохранить"
-        let saveAction = UIAlertAction(title: saveActionTitle, style: .default) { (action) in
-            if isNewCar {
-                
-            } else {
-                
-            }
+        let saveAction = UIAlertAction(title: saveActionTitle, style: .default) { (_) in
+            self.saveCar(editingCarIndex: editingCarIndex)
+            saveActionCompletion?()
+            alertDisappearCompletion?()
         }
         saveAlertAction = saveAction
-        let cancelAction = UIAlertAction(title: "Отменить", style: .cancel, handler: nil)
+        let cancelAction = UIAlertAction(title: "Отменить", style: .cancel) { (_) in
+            alertDisappearCompletion?()
+        }
         alertController.addAction(saveAction)
         alertController.addAction(cancelAction)
         alertController.preferredAction = saveAction
@@ -122,9 +167,9 @@ extension EditCarAlertController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         switch pickerView {
         case yearOfIssuePickerView:
-            return CarsManager.yearOfIssueValues.count
+            return CarsManager.shared.yearOfIssueValues.count
         case bodyTypePickerView:
-            return CarsManager.bodyTypeValues.count
+            return CarsManager.shared.bodyTypeValues.count
         default:
             return 0
         }
